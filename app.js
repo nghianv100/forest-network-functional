@@ -7,5 +7,8 @@ app.all('/', function(req, res) {
 });
 
 app.use('/account', AccountController);
+app.use(function(req, res) {
+    res.send('404 Not Found');
+})
 
 module.exports = app;
