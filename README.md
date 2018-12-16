@@ -2,7 +2,7 @@
 
 Host: http://35.243.137.115:3000/
 
-### /account/<public_key>
+### /account/<public_key> (GET)
 
 Trả về:
 

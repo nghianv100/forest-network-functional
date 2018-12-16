@@ -1,6 +1,4 @@
 let router = require('express').Router();
-let getBalance = require('../utils/get-balance');
-
 let db = require('../firebasedb');
 
 router.get('/', function(req, res) {
@@ -12,6 +10,6 @@ router.get('/:publicKey', function(req, res) {
         .then(function(datasnapshot) {
             res.json(datasnapshot);
         });
-})
+});
 
 module.exports = router;

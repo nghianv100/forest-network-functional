@@ -5,7 +5,7 @@ let { encode, decode, verify, sign, hash } = require('./lib/tx');
 
 let client = RpcClient('https://komodo.forest.network:443');
 
-for (let i = 1; i <= 500; i++) {
+for (let i = 1; i <= 8000; i++) {
     client.block({ height: i })
         .then((res) => {
 
@@ -40,6 +40,6 @@ for (let i = 1; i <= 500; i++) {
             }
         })
         .catch((err) => {
-            
+            console.log(err);
         })
 }

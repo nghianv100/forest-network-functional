@@ -24,6 +24,8 @@ let createAccountTransaction = function(tx_hash, tx_decoded, time, block) {
                     address: tx_decoded.params.address,
                     time: time,
                     block: block
+                }, function() {
+                    console.log('OK. Block:', block);
                 });
 }
 
@@ -46,6 +48,8 @@ let paymentTransaction = function(tx_hash, tx_decoded, time, block) {
                     amount: tx_decoded.params.amount,
                     time: time,
                     block: block
+                }, function() {
+                    console.log('OK. Block:', block);
                 });
 }
 
