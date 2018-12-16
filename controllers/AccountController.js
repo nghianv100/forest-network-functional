@@ -10,7 +10,6 @@ router.get('/', function(req, res) {
 router.get('/:publicKey', function(req, res) {
     db.getAccountInfo(req.params.publicKey)
         .then(function(datasnapshot) {
-            getBalance(datasnapshot);
             res.json(datasnapshot);
         });
 })

@@ -47,5 +47,24 @@ Giả sử gán nguyên cái JSON ở trên vô biến `result`. Hàm tính Bala
 
 ````js
 // Balance
+let getBalance = function(json) {
+    let balance = 0;
 
+    if(json.receive) {
+        for(let key in json.receive) {
+            balance += json.receive[key].amount;
+        }
+    }
+    if(json.send) {
+        for(let key in json.send) {
+            balance -= json.send[key].amount;
+        }
+    }
+
+    return balance
+}
+````
+
+````js
+// Sequence chưa làm
 ````
