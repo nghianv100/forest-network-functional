@@ -11,21 +11,23 @@ let config = {
 
 let db = firebase.initializeApp(config).database();
 
-let createAccountTransaction = function(tx_hash, tx_decoded, block) {
+let createAccountTransaction = function(tx_hash, tx_decoded, time, block) {
     let accountRef = db.ref('accounts');
     accountRef.child(tx_decoded.params.address).update({
-        created_by: tx_decoded.account
+        created_by: tx_decoded.account,
+        created_at: time
     });
     accountRef.child(tx_decoded.account)
                 .child('create')
                 .child(tx_hash)
                 .update({
                     address: tx_decoded.params.address,
+                    time: time,
                     block: block
                 });
 }
 
-let paymentTransaction = function(tx_hash, tx_decoded, block) {
+let paymentTransaction = function(tx_hash, tx_decoded, time, block) {
     let accountRef = db.ref('accounts');
     accountRef.child(tx_decoded.account)
                 .child('send')
@@ -33,6 +35,7 @@ let paymentTransaction = function(tx_hash, tx_decoded, block) {
                 .update({
                     to: tx_decoded.params.address,
                     amount: tx_decoded.params.amount,
+                    time: time,
                     block: block
                 });
     accountRef.child(tx_decoded.params.address)
@@ -41,6 +44,7 @@ let paymentTransaction = function(tx_hash, tx_decoded, block) {
                 .update({
                     from: tx_decoded.account,
                     amount: tx_decoded.params.amount,
+                    time: time,
                     block: block
                 });
 }

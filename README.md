@@ -9,10 +9,13 @@ Trả về:
 ````
 {
     created_by: (Ai tạo ra tài khoản này)
+    created_at: (Thời gian tạo)
+
     create: {
         (Các tài khoản đã được tạo bằng tài khoản này)
         hash_1: {
             address: (Tài khoản được tạo)
+            time: (Thời gian)
             block: (Bỏ qua, không quan trọng)
         },
         hash_2: {...},
@@ -23,6 +26,7 @@ Trả về:
         hash_1: {
             to: (Chuyển cho ai)
             amount: (Chuyển bao nhiêu)
+            time: (Thời gian)
             block: (Bỏ qua, không quan trọng)
         },
         hash_2: {...}
@@ -32,6 +36,7 @@ Trả về:
         hash_1: {
             from: (Nhận từ ai)
             amount: (Nhận bao nhiêu)
+            time: (Thời gian)
             block: (Bỏ qua, không quan trọng)
         }
     }
@@ -41,5 +46,6 @@ Trả về:
 Giả sử gán nguyên cái JSON ở trên vô biến `result`. Hàm tính Balance (số dư) và Sequence là (tính ở Client ngay khi nhận được JSON):
 
 ````js
-// Chưa làm
+// Balance
+
 ````
