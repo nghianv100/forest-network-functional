@@ -2,7 +2,7 @@ let { encode, decode, verify, sign, hash } = require('../lib/tx');
 
 let tx = {
     version: 1,
-    sequence: 7,
+    sequence: 8,
     memo: Buffer.alloc(0),
     operation: 'payment',
     params: {
