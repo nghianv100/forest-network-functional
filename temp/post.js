@@ -3,7 +3,7 @@ const vstruct = require('varstruct');
 
 let tx = {
     version: 1,
-    sequence: 8,
+    sequence: 10,
     memo: Buffer.alloc(0),
     operation: 'post',
     params: {
@@ -18,7 +18,7 @@ const PlainTextContent = vstruct([
 
 let post_content = PlainTextContent.encode({
     type: 1,
-    text: 'Nguyễn Văn Nghĩa, Test vào lúc 19:57 ngày 17-12-2018'
+    text: 'Nguyễn Văn Nghĩa, Test vào lúc 23:33 ngày 17-12-2018'
 })
 
 tx.params.content = post_content;

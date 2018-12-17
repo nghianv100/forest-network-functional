@@ -53,6 +53,18 @@ let paymentTransaction = function(tx_hash, tx_decoded, time, block) {
                 });
 }
 
+let postTransaction = function(tx_hash, tx_decoded, content, time, block) {
+    let accountRef = db.ref('accounts');
+    accountRef.child(tx_decoded.account)
+                .child('post')
+                .child(tx_hash)
+                .update({
+                    content: content.text,
+                    time: time,
+                    block: block
+                });
+}
+
 let getAccountInfo = function(publicKey) {
     let accountRef = db.ref('accounts');
     return accountRef.child(publicKey).once('value');
@@ -61,5 +73,6 @@ let getAccountInfo = function(publicKey) {
 module.exports = {
     createAccountTransaction: createAccountTransaction,
     paymentTransaction: paymentTransaction,
-    getAccountInfo: getAccountInfo
+    getAccountInfo: getAccountInfo,
+    postTransaction: postTransaction
 }

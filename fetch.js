@@ -1,11 +1,17 @@
 let { RpcClient } = require('tendermint');
+let vstruct = require('varstruct');
 let axios = require('axios');
 let db = require('./firebasedb');
 let { encode, decode, verify, sign, hash } = require('./lib/tx');
 
 let client = RpcClient('https://komodo.forest.network:443');
 
-for (let i = 1; i <= 8000; i++) {
+const PlainTextContent = vstruct([
+    { name: 'type', type: vstruct.UInt8 },
+    { name: 'text', type: vstruct.VarString(vstruct.UInt16BE) },
+]);
+
+for (let i = 9550; i <= 9555; i++) {
     client.block({ height: i })
         .then((res) => {
 
@@ -31,6 +37,13 @@ for (let i = 1; i <= 8000; i++) {
                                         break;
                                     case 'payment':
                                         db.paymentTransaction(tx_hash, tx_decoded, time, i);
+                                        break;
+                                    case 'post':
+                                        db.postTransaction(tx_hash, tx_decoded, PlainTextContent.decode(tx_decoded.params.content), time, i);
+                                        break;
+                                    case 'update_account':
+                                        break;
+                                    case 'interact':
                                         break;
                                     default:
                                         break;
