@@ -25,7 +25,7 @@ let createAccountTransaction = function(tx_hash, tx_decoded, time, block) {
                     time: time,
                     block: block
                 }, function() {
-                    console.log('OK. Block:', block);
+                    console.log('SUCC_TX_CREATE_ACC', block);
                 });
 }
 
@@ -49,7 +49,7 @@ let paymentTransaction = function(tx_hash, tx_decoded, time, block) {
                     time: time,
                     block: block
                 }, function() {
-                    console.log('OK. Block:', block);
+                    console.log('SUCC_TX_PAYMENT', block);
                 });
 }
 
@@ -62,7 +62,37 @@ let postTransaction = function(tx_hash, tx_decoded, content, time, block) {
                     content: content.text,
                     time: time,
                     block: block
+                }, function() {
+                    console.log('SUCC_TX_POST', block);
                 });
+}
+
+let updateNameTransaction = function(tx_hash, tx_decoded, name, time, block) {
+    let accountRef = db.ref('accounts');
+    accountRef.child(tx_decoded.account)
+                .child('update_name')
+                .child(tx_hash)
+                .update({
+                    name: name,
+                    time: time,
+                    block: block
+                }, function() {
+                    console.log('SUCC_TX_UPDATE_NAME', block);
+                });
+}
+
+let updatePictureTransaction = function(tx_hash, tx_decoded, picture_base64, time, block) {
+    let accountRef = db.ref('accounts');
+    accountRef.child(tx_decoded.account)
+                .child('update_picture')
+                .child(tx_hash)
+                .update({
+                    picture_base64: picture_base64,
+                    time: time,
+                    block: block
+                }, function() {
+                    console.log('SUCC_TX_UPDATE_PICTURE', block);
+                })
 }
 
 let getAccountInfo = function(publicKey) {
@@ -74,5 +104,7 @@ module.exports = {
     createAccountTransaction: createAccountTransaction,
     paymentTransaction: paymentTransaction,
     getAccountInfo: getAccountInfo,
-    postTransaction: postTransaction
+    postTransaction: postTransaction,
+    updateNameTransaction: updateNameTransaction,
+    updatePictureTransaction: updatePictureTransaction
 }

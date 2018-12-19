@@ -15,8 +15,4 @@ app.get('/', function(req, res) {
 app.use('/account', accountController);
 app.use('/submit', submitTxController);
 
-app.get('*', function(req, res) {
-    res.status(404).json({msg: 'API Not found'});
-})
-
 module.exports = app;
