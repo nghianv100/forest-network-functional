@@ -73,6 +73,7 @@ router.get('/:publicKey', function(req, res) {
             result.info = info;
             result.tx = tx;
 
+            result.info.public_key = req.params.publicKey;
             result.info.energy = 100; // Test
             result.info.balance = balance;
 
