@@ -121,7 +121,7 @@ client_ws.subscribe({ query: "tm.event='Tx'" }, (event) => {
 client.block().then(lastestBlock => {
     let height = parseInt(lastestBlock.block_meta.header.height);
 
-    for (let i = 13000; i <= height; i++) {
+    for (let i = 7600; i <= 7680; i++) {
         client.block({ height: i })
             .then(res => {
                 handleTransaction(res, i);
