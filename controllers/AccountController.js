@@ -61,7 +61,6 @@ router.get('/:publicKey', function(req, res) {
             }
 
             for(let key in jsonRes.receive) {
-                sequence++;
                 balance += jsonRes.receive[key].amount;
             }
 
