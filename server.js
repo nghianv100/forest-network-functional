@@ -22,7 +22,80 @@ let client = RpcClient('https://dragonfly.forest.network:443');
 let client_ws = RpcClient('wss://dragonfly.forest.network:443');
 
 function handleTransaction(res, i) {
-    
+    let num_txs = parseInt(res.block.header.num_txs);
+    let txs = res.block.data.txs;
+    let time = res.block.header.time;
+
+    for (let j = 0; j < num_txs; j++) {
+
+        let tx = txs[j];
+        let buf = Buffer.from(tx, 'base64');
+        let tx_decoded = decode(buf);
+
+        let tx_hash = hash(tx_decoded);
+
+        axios.get('https://dragonfly.forest.network/tx?hash=0x' + tx_hash)
+            .then(function (res_tx) {
+                if (res_tx === null || Object.keys(res_tx).length === 0) {
+                    console.log('ERROR_NULL_TX');
+                } else if (res_tx.error) {
+                    console.log('TX_ERROR', tx_hash);
+                } else if (res_tx.data.result.tx_result.code) {
+                    console.log('TX_ERROR', tx_hash);
+                } else {
+                    switch (tx_decoded.operation) {
+                        case 'create_account':
+                            try {
+                                db.createAccountTransaction(tx_hash, tx_decoded, time, i);
+                            } catch (err) {
+                                console.log('ERROR_CREATE_ACC_TX', i, tx_hash, err);
+                            }
+                            break;
+                        case 'payment':
+                            try {
+                                db.paymentTransaction(tx_hash, tx_decoded, time, i);
+                            } catch (err) {
+                                console.log('ERROR_PAYMENT_TX', i, tx_hash, err);
+                            }
+                            break;
+                        case 'post':
+                            try {
+                                let txtContent;
+                                try {
+                                    txtContent = PlainTextContent.decode(tx_decoded.params.content);
+                                } catch (err_decode) {
+                                    console.log('ERROR_POST_DECODE_TX', i, tx_hash, err_decode);
+                                    txtContent = {
+                                        type: 1,
+                                        text: `<<ERROR_POST_FORMAT, Tx:${tx_hash}>>`
+                                    }
+                                }
+                                db.postTransaction(tx_hash, tx_decoded, txtContent, time, i);
+                            } catch (err) {
+                                console.log('ERROR_POST_TX', i, tx_hash, err);
+                            }
+                            break;
+                        case 'update_account':
+                            try {
+                                if (tx_decoded.params.key === 'name') {
+                                    db.updateNameTransaction(tx_hash, tx_decoded, tx_decoded.params.value.toString('utf-8'), time, i);
+                                } else if (tx_decoded.params.key === 'picture') {
+                                    db.updatePictureTransaction(tx_hash, tx_decoded, tx_decoded.params.value.toString('base64'), time, i);
+                                } else if (tx_decoded.params.key === 'followings') {
+                                    // Followings
+                                }
+                            } catch (err) {
+                                console.log('ERROR_UPDATE_ACCOUNT_TX', i, tx_hash, err);
+                            }
+                            break;
+                        case 'interact':
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            })
+    }
 }
 
 client_ws.subscribe({ query: "tm.event='Tx'" }, (event) => {
@@ -34,90 +107,24 @@ client_ws.subscribe({ query: "tm.event='Tx'" }, (event) => {
     //       result: { tags: [Array] } 
     //     } 
     // }
+    console.log('WS_NEW_TX_AT_BLOCK', event.TxResult.height);
     let newBlockHeight = parseInt(event.TxResult.height);
+    client.block({height: newBlockHeight})
+            .then(res => {
+                handleTransaction(res, newBlockHeight);
+            })
+            .catch((err) => {
+                console.log('FETCH_EVENT_ERR', newBlockHeight, err.message);
+            })
 })
 
 client.block().then(lastestBlock => {
     let height = parseInt(lastestBlock.block_meta.header.height);
 
-    for (let i = 12000; i <= height; i++) {
+    for (let i = 13000; i <= height; i++) {
         client.block({ height: i })
-            .then((res) => {
-
-                let num_txs = parseInt(res.block.header.num_txs);
-                let txs = res.block.data.txs;
-                let time = res.block.header.time;
-
-                for (let j = 0; j < num_txs; j++) {
-
-                    let tx = txs[j];
-                    let buf = Buffer.from(tx, 'base64');
-                    let tx_decoded = decode(buf);
-
-                    let tx_hash = hash(tx_decoded);
-
-                    axios.get('https://dragonfly.forest.network/tx?hash=0x' + tx_hash)
-                        .then(function (res_tx) {
-                            if (res_tx === null || Object.keys(res_tx).length === 0) {
-                                console.log('ERROR_NULL_TX');
-                            } else if (res_tx.error) {
-                                console.log('TX_ERROR', tx_hash);
-                            } else if (res_tx.data.result.tx_result.code) {
-                                console.log('TX_ERROR', tx_hash);
-                            } else {
-                                switch (tx_decoded.operation) {
-                                    case 'create_account':
-                                        try {
-                                            db.createAccountTransaction(tx_hash, tx_decoded, time, i);
-                                        } catch (err) {
-                                            console.log('ERROR_CREATE_ACC_TX', i, tx_hash, err);
-                                        }
-                                        break;
-                                    case 'payment':
-                                        try {
-                                            db.paymentTransaction(tx_hash, tx_decoded, time, i);
-                                        } catch (err) {
-                                            console.log('ERROR_PAYMENT_TX', i, tx_hash, err);
-                                        }
-                                        break;
-                                    case 'post':
-                                        try {
-                                            let txtContent;
-                                            try {
-                                                txtContent = PlainTextContent.decode(tx_decoded.params.content);
-                                            } catch (err_decode) {
-                                                console.log('ERROR_POST_DECODE_TX', i, tx_hash, err_decode);
-                                                txtContent = {
-                                                    type: 1,
-                                                    text: `<<ERROR_POST_FORMAT, Tx:${tx_hash}>>`
-                                                }
-                                            }
-                                            db.postTransaction(tx_hash, tx_decoded, txtContent, time, i);
-                                        } catch (err) {
-                                            console.log('ERROR_POST_TX', i, tx_hash, err);
-                                        }
-                                        break;
-                                    case 'update_account':
-                                        try {
-                                            if (tx_decoded.params.key === 'name') {
-                                                db.updateNameTransaction(tx_hash, tx_decoded, tx_decoded.params.value.toString('utf-8'), time, i);
-                                            } else if (tx_decoded.params.key === 'picture') {
-                                                db.updatePictureTransaction(tx_hash, tx_decoded, tx_decoded.params.value.toString('base64'), time, i);
-                                            } else if (tx_decoded.params.key === 'followings') {
-                                                // Followings
-                                            }
-                                        } catch (err) {
-                                            console.log('ERROR_UPDATE_ACCOUNT_TX', i, tx_hash, err);
-                                        }
-                                        break;
-                                    case 'interact':
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-                        })
-                }
+            .then(res => {
+                handleTransaction(res, i);
             })
             .catch((err) => {
                 console.log('FETCH_BLOCK_ERR', i, err.message);
