@@ -78,6 +78,9 @@ router.get('/:publicKey', function(req, res) {
             result.info.balance = balance;
 
             res.json(result);
+        })
+        .catch(function(err) {
+            res.json({account_not_exists: 1});
         });
 });
 
