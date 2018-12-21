@@ -118,17 +118,17 @@ client_ws.subscribe({ query: "tm.event='Tx'" }, (event) => {
             })
 })
 
-client.block().then(lastestBlock => {
+client.block().then(async (lastestBlock) => {
     let height = parseInt(lastestBlock.block_meta.header.height);
 
-    for (let i = 7600; i <= 7680; i++) {
-        client.block({ height: i })
-            .then(res => {
-                handleTransaction(res, i);
-            })
-            .catch((err) => {
-                console.log('FETCH_BLOCK_ERR', i, err.message);
-            })
+    for(let i = 10000; i <= height; i++) {
+        try {
+            let res = await client.block({height: i});
+            handleTransaction(res, i);
+        } catch(err) {
+            console.log('FETCH_BLOCK_ERR', i, err.message);
+        }
+        
     }
 })
 
