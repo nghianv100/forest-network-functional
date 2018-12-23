@@ -7,7 +7,7 @@ let client = RpcClient('https://komodo.forest.network:443');
 
 let tx = {
     version: 1,
-    sequence: 12,
+    sequence: 31,
     memo: Buffer.alloc(0),
     operation: 'update_account',
     params: {

@@ -5,6 +5,7 @@ let server = require('http').createServer(app);
 let { RpcClient } = require('tendermint');
 let axios = require('axios');
 let vstruct = require('varstruct');
+let base32 = require('base32.js');
 let { encode, decode, verify, sign, hash } = require('./lib/tx');
 
 const port = process.env.PORT || 3000;
@@ -82,13 +83,30 @@ function handleTransaction(res, i) {
                                 } else if (tx_decoded.params.key === 'picture') {
                                     db.updatePictureTransaction(tx_hash, tx_decoded, tx_decoded.params.value.toString('base64'), time, i);
                                 } else if (tx_decoded.params.key === 'followings') {
-                                    // Followings
+                                    try {
+                                        let valueContent = Followings.decode(tx_decoded.params.value);
+                                        let userArr = valueContent.addresses;
+
+                                        for (let i = 0; i < userArr.length; i++) {
+                                            userArr[i] = base32.encode(userArr[i]);
+                                        }
+
+                                        db.updateFollowTransaction(tx_hash, tx_decoded, userArr, time, i);
+                                    } catch (err_decode) {
+                                        console.log('ERROR_FOLLOW_DECODE_TX', i, tx_hash, err_decode);
+                                        db.updateFollowTransaction(tx_hash, tx_decoded, [], time, i);
+                                    }
                                 }
                             } catch (err) {
                                 console.log('ERROR_UPDATE_ACCOUNT_TX', i, tx_hash, err);
                             }
                             break;
                         case 'interact':
+                            try {
+                                db.updateInteractTransaction(tx_hash, tx_decoded, time, i);
+                            } catch (err) {
+                                console.log('ERROR_INTERACT_TX', i, tx_hash, err);
+                            }
                             break;
                         default:
                             break;
@@ -109,26 +127,25 @@ client_ws.subscribe({ query: "tm.event='Tx'" }, (event) => {
     // }
     console.log('WS_NEW_TX_AT_BLOCK', event.TxResult.height);
     let newBlockHeight = parseInt(event.TxResult.height);
-    client.block({height: newBlockHeight})
-            .then(res => {
-                handleTransaction(res, newBlockHeight);
-            })
-            .catch((err) => {
-                console.log('FETCH_EVENT_ERR', newBlockHeight, err.message);
-            })
+    client.block({ height: newBlockHeight })
+        .then(res => {
+            handleTransaction(res, newBlockHeight);
+        })
+        .catch((err) => {
+            console.log('FETCH_EVENT_ERR', newBlockHeight, err.message);
+        })
 })
 
 client.block().then(async (lastestBlock) => {
     let height = parseInt(lastestBlock.block_meta.header.height);
 
-    for(let i = 10000; i <= height; i++) {
+    for (let i = 1; i <= height; i++) {
         try {
-            let res = await client.block({height: i});
+            let res = await client.block({ height: i });
             handleTransaction(res, i);
-        } catch(err) {
+        } catch (err) {
             console.log('FETCH_BLOCK_ERR', i, err.message);
         }
-        
     }
 })
 

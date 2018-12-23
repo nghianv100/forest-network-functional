@@ -1,8 +1,9 @@
 let { encode, decode, verify, sign, hash } = require('../lib/tx');
+let axios = require('axios');
 
 let tx = {
     version: 1,
-    sequence: 18,
+    sequence: 32,
     memo: Buffer.alloc(0),
     operation: 'payment',
     params: {
@@ -13,6 +14,15 @@ let tx = {
 
 sign(tx, 'SDTCH4MUYJPHRHWMGGWXFO6PZFLQX74OKIEDAHTPGCCUD3ZJT2ZGA2H7');
 
-let data = encode(tx).toString('hex');
+let dataEncoded = encode(tx).toString('base64');
 
-console.log(data);
+console.log(dataEncoded);
+
+axios.post('https://komodo.forest.network/', {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "broadcast_tx_commit",
+    "params": [dataEncoded]
+})
+    .then(res => console.log(res.data))
+    .catch(err => console.log(err));
