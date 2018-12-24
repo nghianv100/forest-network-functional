@@ -141,11 +141,17 @@ let getAccountFollowed = function(publicKey) {
     return accountFollowedRef.child(publicKey).once('value');
 }
 
+let getAccountName = function(publicKey) {
+    let accountRef = db.ref('accounts');
+    return accountRef.child(publicKey).child('update_name').orderByChild('block').once('value');
+}
+
 module.exports = {
     createAccountTransaction: createAccountTransaction,
     paymentTransaction: paymentTransaction,
     getAccountInfo: getAccountInfo,
     getAccountFollowed,
+    getAccountName,
     postTransaction: postTransaction,
     updateNameTransaction: updateNameTransaction,
     updatePictureTransaction: updatePictureTransaction,

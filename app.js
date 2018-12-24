@@ -1,6 +1,7 @@
 let app = require('express')();
 
 let accountController = require('./controllers/AccountController');
+let nameController = require('./controllers/NameController');
 let submitTxController = require('./controllers/SubmitTxController');
 
 app.use(function(req, res, next) {
@@ -14,5 +15,6 @@ app.get('/', function(req, res) {
 
 app.use('/account', accountController);
 app.use('/submit', submitTxController);
+app.use('/name', nameController);
 
 module.exports = app;
