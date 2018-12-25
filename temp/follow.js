@@ -7,7 +7,7 @@ let client = RpcClient('https://komodo.forest.network:443');
 
 let tx = {
     version: 1,
-    sequence: 41,
+    sequence: 44,
     memo: Buffer.alloc(0),
     operation: 'update_account',
     params: {
@@ -20,16 +20,11 @@ const Followings = vstruct([
     ]);
 
     Followings.encode({
-        addresses: [base32.decode('GAPH3WMXXZRDQE36QQJWZFP5HSJ3A5MGXMTK3SBTYJEIHVJKCZHXGMQV'), base32.decode('GAO4J5RXQHUVVONBDQZSRTBC42E3EIK66WZA5ZSGKMFCS6UNYMZSIDBI')]
+        addresses: [base32.decode('GDND6ZDDY5TGEJDDGWY7LUAXS2C6U37IJMQXMV74HNPWWJH7EFJAFNYZ'), base32.decode('GAO4J5RXQHUVVONBDQZSRTBC42E3EIK66WZA5ZSGKMFCS6UNYMZSIDBI')]
 });
 
-/*tx.params.value = users;
+tx.params.value = users;
 
 sign(tx, 'SDTCH4MUYJPHRHWMGGWXFO6PZFLQX74OKIEDAHTPGCCUD3ZJT2ZGA2H7');
 
 let data = encode(tx).toString('hex');
-
-client.broadcastTxCommit({ tx: '0x' + data })
-    .then(succ => console.log(succ))
-    .catch(err => console.log(err));
-*/

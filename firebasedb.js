@@ -95,8 +95,33 @@ let updatePictureTransaction = function (tx_hash, tx_decoded, picture_base64, ti
         })
 }
 
-let updateFollowTransaction = function (tx_hash, tx_decoded, arr, time, block) {
+let updateFollowTransaction = async function (tx_hash, tx_decoded, arr, time, block) {
     let accountRef = db.ref('accounts');
+    
+    let AA = await accountRef.child(tx_decoded.account)
+        .child('follow')
+        .once('value');
+    
+    let AAJson = AA.toJSON();    
+    let newest = -1;
+    let old = '';
+
+    for(key in AAJson) {
+        if(AAJson[key].block > newest) {
+            newest = AAJson[key].block;
+            old = AAJson[key].users;
+        }
+    }
+
+    old = old.split(',');
+
+    for(let i = 0; i < old.length; i++) {
+        if(!arr.includes(old[i])) {
+            // DELTE USER NOT FOLLOW ANYMORE
+            db.ref('followed').child(old[i]).child(tx_decoded.account).remove();
+        }
+    }
+
     accountRef.child(tx_decoded.account)
         .child('follow')
         .child(tx_hash)
