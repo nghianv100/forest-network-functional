@@ -147,6 +147,7 @@ let updateFollowTransaction = async function (tx_hash, tx_decoded, arr, time, bl
 let updateInteractTransaction = function (tx_hash, tx_decoded, time, block) {
     let accountRef = db.ref('accounts');
     accountRef.child(tx_decoded.account)
+        .child('interact')
         .child(tx_hash)
         .update({
             block: block,
