@@ -97,7 +97,7 @@ function handleTransaction(res, i) {
                                         db.updateFollowTransaction(tx_hash, tx_decoded, [], time, i);
                                     }
                                 } else {
-
+                                    db.updateOtherTransaction(tx_hash, tx_decoded, i);
                                 }
                             } catch (err) {
                                 console.log('ERROR_UPDATE_ACCOUNT_TX', i, tx_hash, err);
