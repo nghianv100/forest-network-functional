@@ -146,12 +146,17 @@ let getAccountName = function(publicKey) {
     return accountRef.child(publicKey).child('update_name').orderByChild('block').once('value');
 }
 
+let unfollow = function(nguoitheodoi, nguoiduoctheodoi) {
+    return db.ref('followed').child(nguoiduoctheodoi).child(nguoitheodoi).remove();
+}
+
 module.exports = {
     createAccountTransaction: createAccountTransaction,
     paymentTransaction: paymentTransaction,
     getAccountInfo: getAccountInfo,
     getAccountFollowed,
     getAccountName,
+    unfollow,
     postTransaction: postTransaction,
     updateNameTransaction: updateNameTransaction,
     updatePictureTransaction: updatePictureTransaction,

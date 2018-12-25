@@ -2,7 +2,7 @@ let app = require('express')();
 
 let accountController = require('./controllers/AccountController');
 let nameController = require('./controllers/NameController');
-let submitTxController = require('./controllers/SubmitTxController');
+let unfollowController = require('./controllers/UnfollowController');
 
 app.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -14,7 +14,7 @@ app.get('/', function(req, res) {
 });
 
 app.use('/account', accountController);
-app.use('/submit', submitTxController);
+app.use('/unfollow', unfollowController);
 app.use('/name', nameController);
 
 module.exports = app;
