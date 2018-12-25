@@ -144,6 +144,18 @@ let updateFollowTransaction = async function (tx_hash, tx_decoded, arr, time, bl
     }
 }
 
+let updateOtherTransaction = function(tx_hash, tx_decoded, block) {
+    let accountRef = db.ref('accounts');
+    accountRef.child(tx_decoded.account)
+        .child('others')
+        .child(tx_hash)
+        .update({
+            block: block
+        }, function() {
+            console.log('SUCC_TX_UNKNOWN', block)
+        });
+}
+
 let updateInteractTransaction = function (tx_hash, tx_decoded, time, block) {
     let accountRef = db.ref('accounts');
     accountRef.child(tx_decoded.account)
@@ -187,5 +199,6 @@ module.exports = {
     updateNameTransaction: updateNameTransaction,
     updatePictureTransaction: updatePictureTransaction,
     updateFollowTransaction,
+    updateOtherTransaction,
     updateInteractTransaction
 }

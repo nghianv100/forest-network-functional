@@ -72,6 +72,10 @@ router.get('/:publicKey', function (req, res) {
                 sequence++;
             }
 
+            for (let key in jsonRes.others) {
+                sequence++;
+            }
+
             if (jsonRes.follow) {
                 let block_newest_follow = -1;
                 for (let key in jsonRes.follow) {

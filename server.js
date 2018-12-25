@@ -96,6 +96,8 @@ function handleTransaction(res, i) {
                                         console.log('ERROR_FOLLOW_DECODE_TX', i, tx_hash, err_decode);
                                         db.updateFollowTransaction(tx_hash, tx_decoded, [], time, i);
                                     }
+                                } else {
+
                                 }
                             } catch (err) {
                                 console.log('ERROR_UPDATE_ACCOUNT_TX', i, tx_hash, err);
@@ -139,7 +141,7 @@ client_ws.subscribe({ query: "tm.event='Tx'" }, (event) => {
 client.block().then(async (lastestBlock) => {
     let height = parseInt(lastestBlock.block_meta.header.height);
 
-    for (let i = 15000; i <= height; i++) {
+    for (let i = 1; i <= height; i++) {
         try {
             let res = await client.block({ height: i });
             handleTransaction(res, i);
