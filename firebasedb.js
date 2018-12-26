@@ -108,40 +108,6 @@ let updateFollowTransaction = async function (tx_hash, tx_decoded, arr, time, bl
         }, function () {
             console.log('SUCC_TX_FOLLOW', block);
         });
-    
-    let AA = await accountRef.child(tx_decoded.account)
-        .child('follow')
-        .once('value');
-    
-    let AAJson = AA.toJSON();    
-    let newest = -1;
-    let old = '';
-
-    for(key in AAJson) {
-        if(AAJson[key].block > newest && AAJson[key].block != block) {
-            newest = AAJson[key].block;
-            old = AAJson[key].users;
-        }
-    }
-
-    old = old.split(',');
-
-    for(let i = 0; i < old.length; i++) {
-        if(old[i] !== "" && !arr.includes(old[i])) {
-            // DELTE USER NOT FOLLOW ANYMORE
-            db.ref('followed').child(old[i]).child(tx_decoded.account).remove();
-        }
-    }
-
-    let followedRef = db.ref('followed');
-    for (let i = 0; i < arr.length; i++) {
-        followedRef.child(arr[i])
-            .child(tx_decoded.account)
-            .update({
-                block: block,
-                time: time
-            });
-    }
 }
 
 let updateOtherTransaction = function(tx_hash, tx_decoded, block) {
