@@ -174,6 +174,11 @@ let getAccountInfo = function (publicKey) {
     return accountRef.child(publicKey).once('value');
 }
 
+let getAccountFollow = function(publicKey) {
+    let accountRef = db.ref('accounts');
+    return accountRef.child(publicKey).child('follow').once('value');
+}
+
 let getAccountFollowed = function(publicKey) {
     let accountFollowedRef = db.ref('followed');
     return accountFollowedRef.child(publicKey).once('value');
@@ -182,6 +187,11 @@ let getAccountFollowed = function(publicKey) {
 let getAccountName = function(publicKey) {
     let accountRef = db.ref('accounts');
     return accountRef.child(publicKey).child('update_name').orderByChild('block').once('value');
+}
+
+let getAccountPosts = function(publicKey) {
+    let accountRef = db.ref('accounts');
+    return accountRef.child(publicKey).child('post').once('value');
 }
 
 let unfollow = function(nguoitheodoi, nguoiduoctheodoi) {
@@ -200,5 +210,7 @@ module.exports = {
     updatePictureTransaction: updatePictureTransaction,
     updateFollowTransaction,
     updateOtherTransaction,
-    updateInteractTransaction
+    updateInteractTransaction,
+    getAccountFollow,
+    getAccountPosts
 }

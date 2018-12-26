@@ -3,6 +3,7 @@ let app = require('express')();
 let accountController = require('./controllers/AccountController');
 let nameController = require('./controllers/NameController');
 let unfollowController = require('./controllers/UnfollowController');
+let newFeedsController = require('./controllers/NewFeedsController');
 
 app.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -17,5 +18,6 @@ app.get('/', function(req, res) {
 app.use('/account', accountController);
 app.use('/unfollow', unfollowController);
 app.use('/name', nameController);
+app.use('/newfeeds', newFeedsController);
 
 module.exports = app;
